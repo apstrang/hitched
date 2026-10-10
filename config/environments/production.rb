@@ -56,14 +56,15 @@ Rails.application.configure do
   # Set host to be used by links generated in mailer templates.
   config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "example.wedding"), protocol: "https" }
 
-  # SendGrid SMTP relay.
+  # SMTP relay. Defaults to SendGrid (set SENDGRID_API_KEY); set SMTP_ADDRESS and
+  # friends to use any other provider.
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    user_name: "apikey",
-    password: ENV["SENDGRID_API_KEY"],
-    domain: "example.wedding",
-    address: "smtp.sendgrid.net",
-    port: 587,
+    user_name: ENV.fetch("SMTP_USERNAME", "apikey"),
+    password: ENV.fetch("SMTP_PASSWORD") { ENV["SENDGRID_API_KEY"] },
+    domain: ENV.fetch("SMTP_DOMAIN") { ENV.fetch("APP_HOST", "example.wedding") },
+    address: ENV.fetch("SMTP_ADDRESS", "smtp.sendgrid.net"),
+    port: ENV.fetch("SMTP_PORT", 587).to_i,
     authentication: :plain,
     enable_starttls_auto: true
   }

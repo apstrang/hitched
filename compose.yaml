@@ -1,0 +1,51 @@
+# Docker Compose stack for running the site on your own server.
+#
+#   cp .env.example .env    # then fill in the values marked REQUIRED
+#   docker compose up -d --build
+#
+# The app listens on APP_PORT (default 3000) for your reverse proxy, which
+# should terminate HTTPS and forward X-Forwarded-For / X-Forwarded-Proto.
+# Migrations run automatically on every start (bin/docker-entrypoint runs
+# `rails db:prepare`).
+
+name: hitched
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hitched_production
+      POSTGRES_USER: hitched
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hitched -d hitched_production"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    image: hitched:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://hitched:${POSTGRES_PASSWORD}@db:5432/hitched_production
+      CACHE_DATABASE_URL: postgres://hitched:${POSTGRES_PASSWORD}@db:5432/hitched_production_cache
+      CABLE_DATABASE_URL: postgres://hitched:${POSTGRES_PASSWORD}@db:5432/hitched_production_cable
+    ports:
+      - "${APP_BIND:-127.0.0.1}:${APP_PORT:-3000}:80"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/up"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  db-data:

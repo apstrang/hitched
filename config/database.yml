@@ -82,9 +82,14 @@ production:
   primary: &primary_production
     <<: *default
     url: <%= ENV["DATABASE_URL"] %>
+  # Solid Cache and Solid Cable need their own databases: when they share the
+  # primary one, db:prepare sees it as already set up and never loads their
+  # schemas. compose.yaml sets these; elsewhere they fall back to DATABASE_URL.
   cache:
     <<: *primary_production
+    url: <%= ENV.fetch("CACHE_DATABASE_URL") { ENV["DATABASE_URL"] } %>
     migrations_paths: db/cache_migrate
   cable:
     <<: *primary_production
+    url: <%= ENV.fetch("CABLE_DATABASE_URL") { ENV["DATABASE_URL"] } %>
     migrations_paths: db/cable_migrate
