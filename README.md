@@ -226,6 +226,7 @@ This is a template — fork it and make it yours:
 | `STRIPE_SECRET_KEY` | Stripe API key (hotel bookings) | — |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification | — |
 | `ADMIN_NOTIFICATION_EMAIL` | Admin notifications (RSVPs, contact messages, hotel bookings) | parsed from `WEDDING[:from_email]` |
+| `FORCE_SSL` | Set to `false` to serve plain http (testing without the HTTPS proxy) | `true` |
 | `APP_HOST` | Your site's domain, used for links in emails and QR codes | `example.wedding` |
 | `GOOGLE_SHEET_URL` | Default import sheet URL | — |
 
