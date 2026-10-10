@@ -11,6 +11,10 @@ class Invite < ApplicationRecord
   # point at /r/:rsvp_token, so it must never expire or change on its own.
   has_secure_token :rsvp_token
 
+  scope :with_email, -> { where.not(email: [ nil, "" ]) }
+  scope :save_the_date_unsent, -> { with_email.where(save_the_date_sent_at: nil) }
+  scope :invitation_unsent, -> { with_email.where(invitation_sent_at: nil) }
+
   validates :name, presence: true
   validates :email, presence: true
   validate :linked_invite_is_not_self
@@ -24,6 +28,10 @@ class Invite < ApplicationRecord
 
   def responded?
     responded_at.present?
+  end
+
+  def rsvp_qr_code
+    RsvpQrCode.new(self)
   end
 
   def primary_guest

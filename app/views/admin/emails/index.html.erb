@@ -1,9 +1,42 @@
 <h1 class="type-serif-heading" style="font-size: var(--text-3xl); margin-bottom: var(--space-6);">Communications</h1>
 
-<h2 class="type-serif-heading" style="font-size: var(--text-lg); margin-bottom: var(--space-3);">Bulk Actions</h2>
+<% [
+  { title: "Save-the-Dates", noun: "save-the-date", targets: @save_the_date_targets, sent: @save_the_dates_sent, path: admin_send_save_the_dates_path,
+    blurb: "Announces the date and links each household to the website through its permanent link (and QR code)." },
+  { title: "Invitations", noun: "invitation", targets: @invitation_targets, sent: @invitations_sent, path: admin_send_invitations_path,
+    blurb: "Lists the household's events and links to their RSVP through the same permanent link (and QR code). Turn on the RSVP page before sending." }
+].each do |section| %>
+  <% n = section[:targets].size %>
+  <h2 class="type-serif-heading" style="font-size: var(--text-lg); margin-bottom: var(--space-3);"><%= section[:title] %></h2>
+  <div class="card mb-4">
+    <p style="margin-bottom: var(--space-3);">
+      <%= section[:blurb] %>
+      <strong><%= n %></strong> invite<%= "s" unless n == 1 %> with an email address <%= n == 1 ? "hasn't" : "haven't" %> had one yet.
+    </p>
+    <p class="text-muted" style="font-size: var(--text-sm); margin: 0;">
+      Already sent: <%= section[:sent] %>. Bulk sending skips them, so it's safe to press again after adding guests; resend to one household from its invite page.
+    </p>
+  </div>
+  <% if n > 0 %>
+    <details class="mb-4">
+      <summary class="text-muted" style="cursor: pointer; font-size: var(--text-sm);">Show the <%= n %> recipient<%= "s" unless n == 1 %></summary>
+      <ul style="font-size: var(--text-sm); margin-top: var(--space-2);">
+        <% section[:targets].each do |invite| %>
+          <li><%= link_to invite.name, admin_invite_path(invite) %> <span class="text-muted"><%= invite.email %></span></li>
+        <% end %>
+      </ul>
+    </details>
+    <div class="mb-8">
+      <%= button_to "Send #{section[:title]} to #{n} Invite#{"s" unless n == 1}", section[:path], class: "btn btn-primary btn-sm",
+        data: { turbo_confirm: "This will email a #{section[:noun]} to the #{n} invite#{"s" unless n == 1} that haven't had one. Continue?" } %>
+    </div>
+  <% else %>
+    <p class="text-muted mb-8">Everyone with an email address has had one.</p>
+  <% end %>
+<% end %>
+
+<h2 class="type-serif-heading" style="font-size: var(--text-lg); margin-bottom: var(--space-3);">Export</h2>
 <div class="flex gap-3 flex-wrap mb-8">
-  <%= button_to "Send Invitations to All", admin_send_invitations_path, class: "btn btn-primary btn-sm",
-    data: { turbo_confirm: "This will send invitation emails to ALL invites with an email address. Continue?" } %>
   <%= button_to "Export to Google Sheets", admin_export_path, class: "btn btn-primary btn-sm" %>
 </div>
 
@@ -111,6 +144,7 @@
 <h2 class="type-serif-heading" style="font-size: var(--text-lg); margin-bottom: var(--space-3);">Test Emails</h2>
 <p class="text-muted" style="margin-bottom: var(--space-3); font-size: var(--text-sm);">Send a test email to the address in <code>TEST_EMAIL_ADDRESS</code> (defaults to <code>test@example.wedding</code>) using the first invite's data.</p>
 <div class="flex gap-3 flex-wrap">
+  <%= button_to "Test Save-the-Date", admin_send_test_email_path(email_type: "save_the_date"), class: "btn btn-sm", style: "background: var(--color-bg-tertiary); color: var(--color-text-highlight); border: 1px solid var(--color-border);" %>
   <%= button_to "Test Invitation", admin_send_test_email_path(email_type: "invitation"), class: "btn btn-sm", style: "background: var(--color-bg-tertiary); color: var(--color-text-highlight); border: 1px solid var(--color-border);" %>
   <%= button_to "Test Confirmation", admin_send_test_email_path(email_type: "confirmation"), class: "btn btn-sm", style: "background: var(--color-bg-tertiary); color: var(--color-text-highlight); border: 1px solid var(--color-border);" %>
   <%= button_to "Test Update Notification", admin_send_test_email_path(email_type: "update_notification"), class: "btn btn-sm", style: "background: var(--color-bg-tertiary); color: var(--color-text-highlight); border: 1px solid var(--color-border);" %>

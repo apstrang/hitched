@@ -1,0 +1,22 @@
+<p>Dear <%= @invite.name %>,</p>
+
+<p style="text-align: center; font-family: 'Playfair Display', Georgia, serif; font-size: 28px; margin: 24px 0 8px;">Save the Date</p>
+<p style="text-align: center;">We're getting married, and we'd love for you to be there.</p>
+
+<% if (dates = wedding_dates(@events)) || WEDDING[:location].present? %>
+  <div class="event-card" style="text-align: center;">
+    <% if dates %><p class="event-name"><%= dates %></p><% end %>
+    <% if WEDDING[:location].present? %><p class="event-details"><%= WEDDING[:location] %></p><% end %>
+  </div>
+<% end %>
+
+<p>A formal invitation will follow. In the meantime, our website has travel details and more, and it's where you'll RSVP once invitations go out.</p>
+
+<div class="btn-wrapper">
+  <a href="<%= @site_url %>" class="btn">Visit Our Website</a>
+</div>
+
+<div style="text-align: center; margin-top: 24px;">
+  <%= image_tag attachments["rsvp-qr-code.png"].url, alt: "QR code linking to our wedding website", width: 150, height: 150 %>
+  <p style="font-size: 13px; color: #8A8A8A; margin: 4px 0 0;">Or scan with your phone</p>
+</div>

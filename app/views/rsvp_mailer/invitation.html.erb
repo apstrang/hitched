@@ -1,6 +1,6 @@
 <p>Dear <%= @invite.name %>,</p>
 
-<p>We are thrilled to invite you to celebrate our wedding in Provence, France!</p>
+<p>We are thrilled to invite you to celebrate our wedding<% if WEDDING[:location].present? %> in <%= WEDDING[:location] %><% end %>!</p>
 
 <p>You're invited to the following events:</p>
 
@@ -19,4 +19,9 @@
 
 <div class="btn-wrapper">
   <a href="<%= @manage_url %>" class="btn">RSVP Now</a>
+</div>
+
+<div style="text-align: center; margin-top: 24px;">
+  <%= image_tag attachments["rsvp-qr-code.png"].url, alt: "QR code linking to your RSVP", width: 150, height: 150 %>
+  <p style="font-size: 13px; color: #8A8A8A; margin: 4px 0 0;">Or scan with your phone</p>
 </div>

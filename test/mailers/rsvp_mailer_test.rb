@@ -85,12 +85,38 @@ class RsvpMailerTest < ActionMailer::TestCase
   end
 
   test "emails have both html and text parts" do
-    email = RsvpMailer.invitation(@smiths)
+    [ RsvpMailer.save_the_date(@smiths), RsvpMailer.invitation(@smiths), RsvpMailer.reminder(@smiths) ].each do |email|
+      assert email.html_part, "#{email.subject} has no HTML part"
+      assert email.text_part, "#{email.subject} has no text part"
+    end
+  end
 
-    assert_equal 2, email.parts.size
-    content_types = email.parts.map(&:content_type)
-    assert content_types.any? { |ct| ct.include?("text/html") }
-    assert content_types.any? { |ct| ct.include?("text/plain") }
+  test "save-the-date email" do
+    email = RsvpMailer.save_the_date(@smiths)
+
+    assert_emails 1 do
+      email.deliver_now
+    end
+
+    assert_equal [ "smith@example.com" ], email.to
+    assert_equal "Save the Date — #{WEDDING[:couple_names_possessive]} Wedding", email.subject
+    html = email.html_part.body.decoded
+    text = email.text_part.body.decoded
+    [ html, text ].each do |body|
+      assert_match "Dear The Smith Family", body
+      assert_match "September 19–20, 2025", body
+      assert_match WEDDING[:location], body
+      assert_match "http://example.com/r/#{@smiths.rsvp_token}", body
+    end
+  end
+
+  test "save-the-date and invitation embed the household QR code" do
+    [ RsvpMailer.save_the_date(@smiths), RsvpMailer.invitation(@smiths) ].each do |email|
+      qr = email.attachments["rsvp-qr-code.png"]
+      assert qr&.inline?, "#{email.subject} is missing the inline QR code"
+      assert_equal "image/png", qr.mime_type
+      assert_match "cid:#{qr.cid}", email.html_part.body.decoded
+    end
   end
 
   test "default from address is set" do
