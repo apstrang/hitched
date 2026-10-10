@@ -68,6 +68,12 @@ recovery.update!(
   image: "venue5.jpg"
 )
 
+puts "Seeding menu options..."
+
+[ "Chicken", "Fish", "Vegetarian", "Vegan" ].each_with_index do |name, i|
+  MenuOption.find_or_create_by!(name: name) { |o| o.sort_order = i + 1 }
+end
+
 puts "Seeding test invites and guests..."
 
 taylor = Invite.find_or_create_by!(email: "taylor@example.com") do |i|

@@ -41,7 +41,7 @@
       <% @guests.each do |guest| %>
         <tr>
           <td><%= link_to guest.full_name, admin_guest_path(guest) %></td>
-          <td><%= guest.meal_choice.titleize %></td>
+          <td><%= guest.meal_name || "Not chosen" %></td>
           <td class="text-muted"><%= guest.dietary_notes.presence || "None" %></td>
           <td><%= guest.is_primary? ? "Yes" : "" %></td>
           <td><%= guest.is_child? ? "Yes" : "" %></td>

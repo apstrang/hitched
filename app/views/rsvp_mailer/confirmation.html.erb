@@ -22,8 +22,8 @@
         </tr>
       <% end %>
     </table>
-    <% if guest.meal_choice != "tbd" %>
-      <p class="meal-info">Meal: <%= guest.meal_choice.titleize %></p>
+    <% if guest.meal_name %>
+      <p class="meal-info">Meal: <%= guest.meal_name %></p>
     <% end %>
     <% if guest.dietary_notes.present? %>
       <p class="meal-info">Dietary notes: <%= guest.dietary_notes %></p>

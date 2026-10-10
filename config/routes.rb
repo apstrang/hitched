@@ -63,6 +63,7 @@ Rails.application.routes.draw do
       resource :rsvp, only: [ :edit, :update ], controller: "rsvps"
     end
     resources :guests
+    resources :menu_options, except: [ :show ]
     resources :events do
       resource :seating, only: [ :show ], controller: "seating" do
         post :randomize

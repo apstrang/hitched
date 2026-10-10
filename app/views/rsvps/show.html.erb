@@ -73,10 +73,8 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
         <div>
           <label class="form-label">Meal preference</label>
-          <select name="new_guests[NEW_INDEX][meal_choice]" class="form-select">
-            <% Guest.meal_choices.keys.each do |k| %>
-              <option value="<%= k %>"><%= k.titleize %></option>
-            <% end %>
+          <select name="new_guests[NEW_INDEX][menu_option_id]" class="form-select">
+            <%= menu_option_choices %>
           </select>
         </div>
         <div>
@@ -115,10 +113,8 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
         <div>
           <label class="form-label">Meal preference</label>
-          <select name="new_children[NEW_INDEX][meal_choice]" class="form-select">
-            <% Guest.meal_choices.keys.each do |k| %>
-              <option value="<%= k %>"><%= k.titleize %></option>
-            <% end %>
+          <select name="new_children[NEW_INDEX][menu_option_id]" class="form-select">
+            <%= menu_option_choices %>
           </select>
         </div>
         <div>

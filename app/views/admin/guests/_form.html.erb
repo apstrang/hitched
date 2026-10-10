@@ -26,8 +26,8 @@
   </div>
 
   <div class="form-group">
-    <%= f.label :meal_choice, class: "form-label" %>
-    <%= f.select :meal_choice, Guest.meal_choices.keys.map { |k| [k.titleize, k] },
+    <%= f.label :menu_option_id, "Meal", class: "form-label" %>
+    <%= f.select :menu_option_id, menu_option_choices(f.object.menu_option_id, include_inactive: true),
       {},
       class: "form-select" %>
   </div>

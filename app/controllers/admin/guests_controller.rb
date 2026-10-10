@@ -72,7 +72,7 @@ module Admin
     end
 
     def guest_params
-      params.require(:guest).permit(:invite_id, :first_name, :last_name, :email, :is_primary, :is_child, :needs_childcare, :needs_highchair, :reception_seating, :age, :meal_choice, :dietary_notes)
+      params.require(:guest).permit(:invite_id, :first_name, :last_name, :email, :is_primary, :is_child, :needs_childcare, :needs_highchair, :reception_seating, :age, :menu_option_id, :dietary_notes)
     end
   end
 end

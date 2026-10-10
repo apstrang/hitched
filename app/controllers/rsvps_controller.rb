@@ -106,7 +106,7 @@ class RsvpsController < ApplicationController
             guest.destroy!
             next
           end
-          guest.update!(guest_params.permit(:first_name, :last_name, :meal_choice, :dietary_notes, :needs_childcare, :age))
+          guest.update!(guest_params.permit(:first_name, :last_name, :menu_option_id, :dietary_notes, :needs_childcare, :age))
         end
       end
 
@@ -114,7 +114,7 @@ class RsvpsController < ApplicationController
         params[:new_guests].each do |_index, guest_params|
           next if guest_params[:first_name].blank?
           @invite.guests.create!(
-            guest_params.permit(:first_name, :last_name, :meal_choice, :dietary_notes)
+            guest_params.permit(:first_name, :last_name, :menu_option_id, :dietary_notes)
           )
         end
       end
@@ -123,7 +123,7 @@ class RsvpsController < ApplicationController
         params[:new_children].each do |_index, child_params|
           next if child_params[:first_name].blank?
           @invite.guests.create!(
-            child_params.permit(:first_name, :last_name, :meal_choice, :dietary_notes, :needs_childcare, :age).merge(is_child: true)
+            child_params.permit(:first_name, :last_name, :menu_option_id, :dietary_notes, :needs_childcare, :age).merge(is_child: true)
           )
         end
       end

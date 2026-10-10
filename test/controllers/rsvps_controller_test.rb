@@ -54,7 +54,7 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
         john.id.to_s => {
           first_name: "John",
           last_name: "Smith",
-          meal_choice: "chicken",
+          menu_option_id: menu_options(:chicken).id,
           dietary_notes: "No nuts",
           rsvps: {
             ceremony.id.to_s => { attending: "true" }
@@ -66,7 +66,7 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to rsvp_show_path(token: invite.rsvp_token)
 
     john.reload
-    assert_equal "chicken", john.meal_choice
+    assert_equal menu_options(:chicken), john.menu_option
     assert_equal "No nuts", john.dietary_notes
 
     invite.reload
@@ -83,7 +83,7 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
         john.id.to_s => {
           first_name: "Jonathan",
           last_name: "Smithson",
-          meal_choice: "tbd",
+          menu_option_id: "",
           rsvps: {
             ceremony.id.to_s => { attending: "true" }
           }
@@ -109,7 +109,7 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
           john.id.to_s => {
             first_name: "John",
             last_name: "Smith",
-            meal_choice: "tbd",
+            menu_option_id: "",
             rsvps: {
               ceremony.id.to_s => { attending: "true" }
             }
@@ -119,7 +119,7 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
           "0" => {
             first_name: "Bobby",
             last_name: "Smith",
-            meal_choice: "fish",
+            menu_option_id: menu_options(:fish).id,
             dietary_notes: "Gluten free"
           }
         }
@@ -131,7 +131,7 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
     new_guest = invite.guests.find_by(first_name: "Bobby")
     assert_not_nil new_guest
     assert_equal "Smith", new_guest.last_name
-    assert_equal "fish", new_guest.meal_choice
+    assert_equal menu_options(:fish), new_guest.menu_option
     assert_equal "Gluten free", new_guest.dietary_notes
   end
 
@@ -146,7 +146,7 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
           john.id.to_s => {
             first_name: "John",
             last_name: "Smith",
-            meal_choice: "tbd",
+            menu_option_id: "",
             rsvps: {
               ceremony.id.to_s => { attending: "true" }
             }
@@ -156,7 +156,7 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
           "0" => {
             first_name: "",
             last_name: "",
-            meal_choice: "tbd"
+            menu_option_id: ""
           }
         }
       }
@@ -175,7 +175,7 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
           john.id.to_s => {
             first_name: "John",
             last_name: "Smith",
-            meal_choice: "tbd",
+            menu_option_id: "",
             rsvps: {
               ceremony.id.to_s => { attending: "true" }
             }
@@ -203,7 +203,7 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
             _destroy: "0",
             first_name: "John",
             last_name: "Smith",
-            meal_choice: "tbd",
+            menu_option_id: "",
             rsvps: {
               ceremony.id.to_s => { attending: "true" }
             }
@@ -211,5 +211,20 @@ class RsvpsControllerTest < ActionDispatch::IntegrationTest
         }
       }
     end
+  end
+
+  test "RSVP form offers only menu options shown to guests" do
+    get rsvp_show_path(token: invites(:smiths).rsvp_token)
+    assert_response :success
+    assert_select "select[name='guests[#{guests(:john_smith).id}][menu_option_id]'] option", text: "Chicken"
+    assert_select "option", text: /Beef/, count: 0
+  end
+
+  test "a hidden option a guest already chose stays selected on their form" do
+    john = guests(:john_smith)
+    john.update!(menu_option: menu_options(:retired_beef))
+
+    get rsvp_show_path(token: invites(:smiths).rsvp_token)
+    assert_select "select[name='guests[#{john.id}][menu_option_id]'] option[selected]", text: /Beef/
   end
 end

@@ -7,7 +7,7 @@ New RSVP from <%= @invite.name %> — <%= @invite.attending? ? "Attending" : "De
   <%= event.name %>: <%= rsvp&.attending == true ? "Attending" : (rsvp&.attending == false ? "Declined" : "Pending") %>
 <% end -%>
 <% notes = [] -%>
-<% notes << "Meal: #{guest.meal_choice.titleize}" if guest.meal_choice.present? && guest.meal_choice != "tbd" -%>
+<% notes << "Meal: #{guest.meal_name}" if guest.meal_name -%>
 <% notes << "Dietary notes: #{guest.dietary_notes}" if guest.dietary_notes.present? -%>
 <% notes << "Needs childcare" if guest.needs_childcare? -%>
 <% notes << "Highchair requested" if guest.is_child? && guest.needs_highchair? -%>

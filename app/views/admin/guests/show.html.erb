@@ -10,7 +10,7 @@
 
 <div class="grid grid-cols-2 gap-4 mb-6" style="font-size: var(--text-sm);">
   <div><span class="text-muted">Invite:</span> <%= link_to @guest.invite.name, admin_invite_path(@guest.invite) %></div>
-  <div><span class="text-muted">Meal:</span> <%= @guest.meal_choice.titleize %></div>
+  <div><span class="text-muted">Meal:</span> <%= @guest.meal_name || "Not chosen" %></div>
   <div><span class="text-muted">Dietary Notes:</span> <%= @guest.dietary_notes.presence || "None" %></div>
   <div><span class="text-muted">Primary Contact:</span> <%= @guest.is_primary? ? "Yes" : "No" %></div>
   <div><span class="text-muted">Child:</span> <%= @guest.is_child? ? "Yes" : "No" %></div>

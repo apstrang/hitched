@@ -12,7 +12,7 @@
     <% end %>
   </td>
   <td><%= link_to guest.invite.name, admin_invite_path(guest.invite) %></td>
-  <td><%= guest.meal_choice&.titleize %></td>
+  <td><%= guest.meal_name %></td>
   <td class="text-muted" style="max-width: 140px; font-size: var(--text-xs); white-space: normal; word-break: break-word;"><%= guest.dietary_notes.presence || "" %></td>
   <td><%= guest.is_child? ? (guest.age.present? ? "Yes (#{guest.age})" : "Yes") : "" %></td>
 </tr>

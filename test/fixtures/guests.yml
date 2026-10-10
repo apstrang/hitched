@@ -2,19 +2,17 @@ john_smith:
   invite: smiths
   first_name: John
   last_name: Smith
-  meal_choice: 0
   is_primary: true
 
 jane_smith:
   invite: smiths
   first_name: Jane
   last_name: Smith
-  meal_choice: 0
   is_primary: false
 
 mike_johnson:
   invite: johnsons
   first_name: Mike
   last_name: Johnson
-  meal_choice: 1
+  menu_option: chicken
   is_primary: true

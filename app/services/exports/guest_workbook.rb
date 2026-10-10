@@ -54,7 +54,7 @@ module Exports
                 under_18?(guest),
                 child?(guest),
                 guest.age,
-                guest.meal_choice&.titleize,
+                guest.meal_name,
                 guest.dietary_notes
               ]
             else
@@ -98,7 +98,7 @@ module Exports
         .joins(:rsvps, :invite)
         .where(rsvps: { event_id: event.id, attending: true })
         .order("invites.name ASC, guests.is_primary DESC, guests.first_name ASC")
-        .includes(:invite)
+        .includes(:invite, :menu_option)
     end
 
     def adult?(guest)

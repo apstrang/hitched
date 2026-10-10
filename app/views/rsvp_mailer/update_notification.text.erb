@@ -8,7 +8,7 @@ We've received your updated RSVP. Here's what we have on file now:
 <% rsvp = guest.rsvp_for(event) %>
   <%= event.name %>: <%= rsvp&.attending == true ? "Joyfully accepts" : rsvp&.attending == false ? "Regretfully declines" : "Pending" %>
 <% end %>
-<% if guest.meal_choice != "tbd" %>  Meal: <%= guest.meal_choice.titleize %><% end %>
+<% if guest.meal_name %>  Meal: <%= guest.meal_name %><% end %>
 <% if guest.dietary_notes.present? %>  Dietary notes: <%= guest.dietary_notes %><% end %>
 <% if guest.needs_childcare? %>  Needs childcare<% end %>
 
