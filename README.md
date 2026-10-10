@@ -224,7 +224,8 @@ This is a template — fork it and make it yours:
 | `SENDGRID_API_KEY` | Email delivery (production) | — |
 | `STRIPE_SECRET_KEY` | Stripe API key (hotel bookings) | — |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification | — |
-| `ADMIN_NOTIFICATION_EMAIL` | Hotel booking admin notifications | parsed from `WEDDING[:from_email]` |
+| `ADMIN_NOTIFICATION_EMAIL` | Admin notifications (RSVPs, contact messages, hotel bookings) | parsed from `WEDDING[:from_email]` |
+| `APP_HOST` | Your site's domain, used for links in emails and QR codes | `example.wedding` |
 | `GOOGLE_SHEET_URL` | Default import sheet URL | — |
 
 ## Tests
