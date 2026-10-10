@@ -121,6 +121,6 @@ class RsvpMailerTest < ActionMailer::TestCase
 
   test "default from address is set" do
     email = RsvpMailer.invitation(@smiths)
-    assert_equal [ "rsvp@example.wedding" ], email.from
+    assert_equal [ WEDDING[:from_email][/<(.+)>/, 1] ], email.from
   end
 end
