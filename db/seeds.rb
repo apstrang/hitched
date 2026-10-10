@@ -6,13 +6,13 @@ welcome.update!(
   start_time: Time.zone.parse("16:00"),
   location: "Golden Heart Estate",
   location_url: "#",
-  address: "123 Shapleigh Road, Shapleigh, Maine",
+  address: "625 Ross Corner Rd, Shapleigh, Maine",
   maps_url: "#",
   time_description: "4:00pm",
   attire: "Not a Wifebeater, pls",
   attire_description: "Elegant, effortless summer attire in soft, warm-weather fabrics.",
-  subtitle: "Saturday, July 17",
-  description: "Join us as we gather at the Château for a relaxed welcome — golden light across the vineyards, an aperitif in the gardens and a warm start to the celebrations.",
+  subtitle: "Friday, July 16",
+  description: "Join us as we gather at the Estate for a relaxed welcome — golden light across the vineyards, an aperitif in the gardens and a warm start to the celebrations.",
   sort_order: 1,
   image: "venue4.jpg"
 )
