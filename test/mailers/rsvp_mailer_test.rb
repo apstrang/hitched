@@ -17,7 +17,7 @@ class RsvpMailerTest < ActionMailer::TestCase
     assert_equal "You're Invited — #{WEDDING[:couple_names_possessive]} Wedding", email.subject
     assert_match "Dear The Smith Family", email.body.encoded
     assert_match "RSVP Now", email.body.encoded
-    assert_match "rsvp/manage?token=", email.body.encoded
+    assert_match "/r/#{@smiths.rsvp_token}", email.body.encoded
   end
 
   test "confirmation email" do
@@ -60,15 +60,11 @@ class RsvpMailerTest < ActionMailer::TestCase
     assert_match "RSVP Now", email.body.encoded
   end
 
-  test "magic link token is verifiable" do
+  test "emails link to the permanent household RSVP link" do
     email = RsvpMailer.invitation(@smiths)
     text_body = email.text_part.body.decoded
 
-    url = text_body.match(/(http[^\s]+rsvp\/manage\?token=[^\s]+)/)[1]
-    token = URI.decode_www_form_component(URI.parse(url).query.sub("token=", ""))
-    verified_id = Rails.application.message_verifier(:rsvp_management).verify(token)
-
-    assert_equal @smiths.id, verified_id
+    assert_includes text_body, "http://example.com/r/#{@smiths.rsvp_token}"
   end
 
   test "invitation includes event details" do

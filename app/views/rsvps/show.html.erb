@@ -9,7 +9,7 @@
     <% end %>
   </p>
 
-  <%= form_with url: rsvp_update_path(invite_id: @invite.id), method: :post do |f| %>
+  <%= form_with url: rsvp_update_path(token: @invite.rsvp_token), method: :post do |f| %>
     <div class="toggle-switch" style="margin-bottom: var(--space-8);">
       <span class="toggle-label <%= 'toggle-label-active' unless @invite.attending == false %>"
             data-guests-target="acceptLabel">Can attend</span>

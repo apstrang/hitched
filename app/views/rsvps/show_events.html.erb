@@ -4,7 +4,7 @@
     Let us know which events each guest can attend.
   </p>
 
-  <%= form_with url: rsvp_update_path(invite_id: @invite.id, step: "events"), method: :post do |f| %>
+  <%= form_with url: rsvp_update_path(token: @invite.rsvp_token, step: "events"), method: :post do |f| %>
     <% @events.each do |event| %>
       <div class="card" style="margin-bottom: var(--space-6); padding: 0; overflow: hidden; display: flex;">
         <% if event.image.present? %>
@@ -46,7 +46,7 @@
     <% end %>
 
     <div class="flex justify-between items-center" style="margin-top: var(--space-6);">
-      <%= link_to "← Back to Guests", rsvp_show_path(invite_id: @invite.id), class: "btn btn-outline" %>
+      <%= link_to "← Back to Guests", rsvp_show_path(token: @invite.rsvp_token), class: "btn btn-outline" %>
       <%= f.submit "Next: Leave a Note", class: "btn btn-highlight btn-lg" %>
     </div>
   <% end %>

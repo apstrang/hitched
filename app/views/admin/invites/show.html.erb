@@ -14,6 +14,7 @@
   <div><span class="text-muted">Responded:</span> <%= @invite.responded? ? @invite.responded_at.strftime("%b %d, %Y %l:%M %p") : "Not yet" %></div>
   <div><span class="text-muted">Attending:</span> <%= @invite.attending.nil? ? "Pending" : @invite.attending? ? "Yes" : "No" %></div>
   <div><span class="text-muted">Children Attending:</span> <%= @invite.children_attending? ? "Yes" : "No" %></div>
+  <div class="col-span-2"><span class="text-muted">RSVP link:</span> <%= link_to rsvp_invite_url(token: @invite.rsvp_token), rsvp_invite_url(token: @invite.rsvp_token), target: "_blank", rel: "noopener" %></div>
 </div>
 
 <% if @invite.notes.present? %>

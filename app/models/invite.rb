@@ -7,6 +7,10 @@ class Invite < ApplicationRecord
   has_many :linked_invites, class_name: "Invite", foreign_key: :linked_invite_id, dependent: :nullify
   accepts_nested_attributes_for :guests, allow_destroy: true
 
+  # Permanent per-household RSVP token. Printed QR codes and emailed links
+  # point at /r/:rsvp_token, so it must never expire or change on its own.
+  has_secure_token :rsvp_token
+
   validates :name, presence: true
   validates :email, presence: true
   validate :linked_invite_is_not_self

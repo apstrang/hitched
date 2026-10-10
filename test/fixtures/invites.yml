@@ -1,9 +1,11 @@
 smiths:
   name: The Smith Family
   email: smith@example.com
+  rsvp_token: smithsToken0000000000000
   responded_at: null
 
 johnsons:
   name: The Johnson Family
   email: johnson@example.com
+  rsvp_token: johnsonsToken00000000000
   responded_at: 2025-08-01 12:00:00

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_24_120006) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_10_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -94,9 +94,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_24_120006) do
     t.string "name", null: false
     t.text "notes"
     t.datetime "responded_at"
+    t.string "rsvp_token", null: false
     t.boolean "send_reminder", default: true, null: false
     t.datetime "updated_at", null: false
     t.index ["linked_invite_id"], name: "index_invites_on_linked_invite_id"
+    t.index ["rsvp_token"], name: "index_invites_on_rsvp_token", unique: true
   end
 
   create_table "rsvps", force: :cascade do |t|

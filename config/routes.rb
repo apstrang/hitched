@@ -11,8 +11,12 @@ Rails.application.routes.draw do
   get  "rsvp",                to: "rsvps#new",    as: :rsvp
   post "rsvp/lookup",         to: "rsvps#lookup", as: :rsvp_lookup
   get  "rsvp/manage",         to: "rsvps#manage", as: :rsvp_manage
-  get  "rsvp/:invite_id",  to: "rsvps#show",   as: :rsvp_show
-  post "rsvp/:invite_id",  to: "rsvps#update",  as: :rsvp_update
+  get  "rsvp/:token",       to: "rsvps#show",   as: :rsvp_show
+  post "rsvp/:token",       to: "rsvps#update", as: :rsvp_update
+
+  # Permanent per-household link (for QR codes, printed invites and emails).
+  # Lets the guest past the site gate and straight into their RSVP.
+  get  "r/:token",          to: "rsvps#entry",  as: :rsvp_invite
 
   # Standalone children-preferences page (highchair + reception dinner seating)
   get   "children/:token", to: "children_preferences#show",   as: :children_preferences

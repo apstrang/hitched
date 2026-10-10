@@ -22,5 +22,5 @@
     <% end %>
   </div>
 
-  <%= link_to "Edit Your RSVP", rsvp_show_path(invite_id: @invite.id), class: "btn btn-outline" %>
+  <%= link_to "Edit Your RSVP", rsvp_show_path(token: @invite.rsvp_token), class: "btn btn-outline" %>
 </div>
