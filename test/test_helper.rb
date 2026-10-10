@@ -19,7 +19,24 @@ module ActiveSupport
   end
 end
 
+# Lets a test switch individual pages off, since PAGES_CONFIG is frozen above.
+module DisabledPagesForTest
+  mattr_accessor :pages, default: []
+
+  def page_enabled?(page)
+    DisabledPagesForTest.pages.include?(page.to_s) ? false : super
+  end
+end
+ApplicationController.prepend(DisabledPagesForTest)
+
 class ActionDispatch::IntegrationTest
+  def with_pages_disabled(*pages)
+    DisabledPagesForTest.pages = pages.map(&:to_s)
+    yield
+  ensure
+    DisabledPagesForTest.pages = []
+  end
+
   def authenticate_gate!
     post gate_path, params: { code: ENV.fetch("WEDDING_INVITE_CODE") }
     follow_redirect!

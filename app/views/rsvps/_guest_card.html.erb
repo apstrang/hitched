@@ -17,8 +17,8 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
     <div>
       <label class="form-label">Meal preference</label>
-      <%= select_tag "guests[#{guest.id}][meal_choice]",
-        options_for_select(Guest.meal_choices.keys.map { |k| [k.titleize, k] }, guest.meal_choice),
+      <%= select_tag "guests[#{guest.id}][menu_option_id]",
+        menu_option_choices(guest.menu_option_id),
         class: "form-select" %>
     </div>
     <div>

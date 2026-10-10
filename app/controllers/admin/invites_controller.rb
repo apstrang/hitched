@@ -107,7 +107,7 @@ module Admin
 
     def invite_params
       params.require(:invite).permit(:name, :email,
-        guests_attributes: [ :id, :first_name, :last_name, :is_primary, :meal_choice, :dietary_notes, :_destroy ])
+        guests_attributes: [ :id, :first_name, :last_name, :is_primary, :menu_option_id, :dietary_notes, :_destroy ])
     end
   end
 end

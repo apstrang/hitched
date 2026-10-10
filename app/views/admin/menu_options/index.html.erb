@@ -1,0 +1,42 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="type-serif-heading" style="font-size: var(--text-3xl);">Menu</h1>
+  <%= link_to "New Menu Option", new_admin_menu_option_path, class: "btn btn-primary btn-sm" %>
+</div>
+
+<p class="text-muted mb-6" style="font-size: var(--text-sm);">
+  Guests pick one of the shown options when they RSVP. Hide an option to stop offering it without losing the choices guests already made.
+</p>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Order</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Shown to guests</th>
+        <th class="text-center">Chosen by</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @menu_options.each do |option| %>
+        <tr>
+          <td class="text-muted"><%= option.sort_order %></td>
+          <td><%= link_to option.name, edit_admin_menu_option_path(option) %></td>
+          <td class="text-muted"><%= option.description %></td>
+          <td><%= option.active? ? "Yes" : "Hidden" %></td>
+          <td class="text-center"><%= @counts.fetch(option.id, 0) %></td>
+          <td class="text-right">
+            <%= button_to "Delete", admin_menu_option_path(option), method: :delete,
+              data: { turbo_confirm: "Delete #{option.name}?" },
+              class: "btn btn-danger btn-sm" %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @menu_options.empty? %>
+        <tr><td colspan="6" class="text-muted">No menu options yet. Guests won't be asked for a meal until you add one.</td></tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

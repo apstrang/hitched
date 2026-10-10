@@ -1,0 +1,12 @@
+chicken:
+  name: Chicken
+  sort_order: 1
+
+fish:
+  name: Fish
+  sort_order: 2
+
+retired_beef:
+  name: Beef
+  sort_order: 3
+  active: false

@@ -1,0 +1,5 @@
+<p><strong><%= @contact_message.name %></strong> (<%= mail_to @contact_message.email %>) sent a message from the wedding website:</p>
+
+<%= simple_format(@contact_message.body) %>
+
+<p>Reply to this email to answer them directly.</p>

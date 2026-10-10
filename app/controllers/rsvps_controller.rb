@@ -1,5 +1,6 @@
 class RsvpsController < ApplicationController
-  before_action -> { require_page_enabled!(:rsvp) }
+  skip_before_action :require_invite_code, only: :entry
+  before_action -> { require_page_enabled!(:rsvp) }, except: :entry
 
   def new
   end
@@ -13,22 +14,35 @@ class RsvpsController < ApplicationController
 
     invite = Invite.find_by_email(query)
     if invite
-      redirect_to rsvp_show_path(invite_id: invite.id)
+      redirect_to rsvp_show_path(token: invite.rsvp_token)
     else
       flash.now[:alert] = "We couldn't find your invitation. Please check your email and try again."
       render :new, status: :unprocessable_entity
     end
   end
 
+  def entry
+    invite = Invite.find_by(rsvp_token: params[:token])
+    if invite
+      session[:site_authenticated] = true
+      # Before RSVPs open (e.g. a save-the-date QR code), land on the home page.
+      redirect_to page_enabled?(:rsvp) ? rsvp_show_path(token: invite.rsvp_token) : root_path
+    else
+      redirect_to(session[:site_authenticated] ? rsvp_path : gate_path,
+        alert: "We couldn't find that invitation link. Please enter your email instead.")
+    end
+  end
+
+  # Signed links sent by earlier versions of the app (valid for 30 days).
   def manage
     invite_id = Rails.application.message_verifier(:rsvp_management).verify(params[:token])
-    redirect_to rsvp_show_path(invite_id: invite_id)
-  rescue ActiveSupport::MessageVerifier::InvalidSignature
+    redirect_to rsvp_show_path(token: Invite.find(invite_id).rsvp_token)
+  rescue ActiveSupport::MessageVerifier::InvalidSignature, ActiveRecord::RecordNotFound
     redirect_to rsvp_path, alert: "This link has expired. Please enter your email to manage your RSVP."
   end
 
   def show
-    @invite = Invite.find(params[:invite_id])
+    @invite = Invite.find_by!(rsvp_token: params[:token])
     @adults = @invite.guests.adults.order(is_primary: :desc, first_name: :asc)
     @children = @invite.guests.children.order(:first_name)
     @guests = @adults + @children
@@ -40,7 +54,7 @@ class RsvpsController < ApplicationController
       render :show_notes
     elsif params[:step] == "events"
       if @guests.empty?
-        redirect_to rsvp_show_path(invite_id: @invite.id), alert: "Please add your guests first."
+        redirect_to rsvp_show_path(token: @invite.rsvp_token), alert: "Please add your guests first."
         return
       end
       ensure_rsvps_exist
@@ -53,7 +67,7 @@ class RsvpsController < ApplicationController
   end
 
   def update
-    @invite = Invite.find(params[:invite_id])
+    @invite = Invite.find_by!(rsvp_token: params[:token])
     @events = @invite.events.order(:date, :start_time)
 
     if params[:step] == "notes"
@@ -93,7 +107,7 @@ class RsvpsController < ApplicationController
             guest.destroy!
             next
           end
-          guest.update!(guest_params.permit(:first_name, :last_name, :meal_choice, :dietary_notes, :needs_childcare, :age))
+          guest.update!(guest_params.permit(:first_name, :last_name, :menu_option_id, :dietary_notes, :needs_childcare, :age))
         end
       end
 
@@ -101,7 +115,7 @@ class RsvpsController < ApplicationController
         params[:new_guests].each do |_index, guest_params|
           next if guest_params[:first_name].blank?
           @invite.guests.create!(
-            guest_params.permit(:first_name, :last_name, :meal_choice, :dietary_notes)
+            guest_params.permit(:first_name, :last_name, :menu_option_id, :dietary_notes)
           )
         end
       end
@@ -110,7 +124,7 @@ class RsvpsController < ApplicationController
         params[:new_children].each do |_index, child_params|
           next if child_params[:first_name].blank?
           @invite.guests.create!(
-            child_params.permit(:first_name, :last_name, :meal_choice, :dietary_notes, :needs_childcare, :age).merge(is_child: true)
+            child_params.permit(:first_name, :last_name, :menu_option_id, :dietary_notes, :needs_childcare, :age).merge(is_child: true)
           )
         end
       end
@@ -119,7 +133,7 @@ class RsvpsController < ApplicationController
     end
 
     if attending
-      redirect_to rsvp_show_path(invite_id: @invite.id, step: "events")
+      redirect_to rsvp_show_path(token: @invite.rsvp_token, step: "events")
     else
       @invite.update!(responded_at: Time.current)
       was_first_response = @invite.responded_at_previously_was.nil?
@@ -129,7 +143,7 @@ class RsvpsController < ApplicationController
         RsvpMailer.update_notification(@invite).deliver_later
       end
       RsvpMailer.admin_notification(@invite).deliver_later
-      redirect_to rsvp_show_path(invite_id: @invite.id), notice: "We're sorry you can't make it! Your response has been saved."
+      redirect_to rsvp_show_path(token: @invite.rsvp_token), notice: "We're sorry you can't make it! Your response has been saved."
     end
   end
 
@@ -148,7 +162,7 @@ class RsvpsController < ApplicationController
       @invite.update!(children_attending: @invite.guests.children.exists?)
     end
 
-    redirect_to rsvp_show_path(invite_id: @invite.id, step: "notes")
+    redirect_to rsvp_show_path(token: @invite.rsvp_token, step: "notes")
   end
 
   def update_notes
@@ -163,7 +177,7 @@ class RsvpsController < ApplicationController
     end
     RsvpMailer.admin_notification(@invite).deliver_later
 
-    redirect_to rsvp_show_path(invite_id: @invite.id, step: "confirmation")
+    redirect_to rsvp_show_path(token: @invite.rsvp_token, step: "confirmation")
   end
 
   def ensure_rsvps_exist

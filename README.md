@@ -83,7 +83,15 @@ The RSVP process is a multi-step form designed for households, not individuals:
 4. **Meal & notes** — Pick a meal choice per guest and add dietary notes. Optionally leave a message for the couple.
 5. **Confirmation** — Summary page. A confirmation email is sent on first response; update emails are sent on subsequent changes.
 
-Guests can return anytime with the same email to update their response. Emails include a signed management link (valid for 30 days) that skips the lookup step.
+Guests can return anytime with the same email to update their response. Every household also gets a permanent RSVP link, `/r/<token>`, shown on the admin invite page and used in every email. It never expires and lets the guest past the site gate, so it is safe to print as a QR code on save-the-dates and invitations. Before RSVPs open it lands on the home page; once the `rsvp` page is enabled it goes straight to the household's RSVP.
+
+### Menu Options
+
+Meal choices live in the database, not in code. Add, rename, reorder or hide them at `/admin/menu_options`. A hidden option is no longer offered, but guests who already picked it keep their choice. An option guests have picked can't be deleted.
+
+### Contact Page
+
+`/contact` (enable `contact` in `config/pages.yml`) lets guests send a message. Messages are saved and listed at `/admin/messages`, and emailed to `ADMIN_NOTIFICATION_EMAIL` with reply-to set to the guest.
 
 ### Content Pages
 
@@ -101,6 +109,7 @@ attire: false
 faq: false
 our_story: false
 gallery: false
+contact: false
 rsvp: false      # enable when RSVPs open
 hotel: false     # enable when hotel booking opens
 ```
@@ -215,7 +224,8 @@ This is a template — fork it and make it yours:
 | `SENDGRID_API_KEY` | Email delivery (production) | — |
 | `STRIPE_SECRET_KEY` | Stripe API key (hotel bookings) | — |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification | — |
-| `ADMIN_NOTIFICATION_EMAIL` | Hotel booking admin notifications | parsed from `WEDDING[:from_email]` |
+| `ADMIN_NOTIFICATION_EMAIL` | Admin notifications (RSVPs, contact messages, hotel bookings) | parsed from `WEDDING[:from_email]` |
+| `APP_HOST` | Your site's domain, used for links in emails and QR codes | `example.wedding` |
 | `GOOGLE_SHEET_URL` | Default import sheet URL | — |
 
 ## Tests

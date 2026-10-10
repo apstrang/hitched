@@ -5,7 +5,8 @@ module Admin
       @responded_invites = Invite.where.not(responded_at: nil).count
       @total_guests = Guest.count
       @events = Event.order(:date, :start_time)
-      @meal_counts = Guest.where.not(meal_choice: :tbd).group(:meal_choice).count
+      meal_totals = Guest.where.not(menu_option_id: nil).group(:menu_option_id).count
+      @meal_counts = MenuOption.ordered.where(id: meal_totals.keys).to_h { |o| [ o.name, meal_totals[o.id] ] }
       @attending_invites = Invite.where(attending: true).count
       @declined_invites = Invite.where(attending: false).count
       @pending_invites = Invite.where(responded_at: nil).count

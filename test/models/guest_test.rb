@@ -22,11 +22,11 @@ class GuestTest < ActiveSupport::TestCase
     assert_equal "Clotilde", guest.full_name
   end
 
-  test "meal_choice enum" do
+  test "meal_name comes from the chosen menu option" do
     guest = guests(:john_smith)
-    assert guest.tbd?
-    guest.meal_choice = :chicken
-    assert guest.chicken?
+    assert_nil guest.meal_name
+    guest.menu_option = menu_options(:fish)
+    assert_equal "Fish", guest.meal_name
   end
 
   test "rsvp_for returns rsvp for event" do

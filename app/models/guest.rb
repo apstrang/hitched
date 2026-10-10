@@ -1,8 +1,8 @@
 class Guest < ApplicationRecord
   belongs_to :invite
+  belongs_to :menu_option, optional: true
   has_many :rsvps, dependent: :destroy
 
-  enum :meal_choice, { tbd: 0, chicken: 1, fish: 2, vegetarian: 3, vegan: 4 }
   enum :reception_seating, { with_parents: 0, kids_area: 1 }, prefix: :seated
 
   scope :adults, -> { where(is_child: false) }
@@ -14,6 +14,10 @@ class Guest < ApplicationRecord
 
   def full_name
     [ first_name, last_name ].map(&:presence).compact.join(" ")
+  end
+
+  def meal_name
+    menu_option&.name
   end
 
   def rsvp_for(event)

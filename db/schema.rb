@@ -10,9 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_24_120006) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_10_120200) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "contact_messages", force: :cascade do |t|
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.string "email", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "event_invites", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -54,12 +62,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_24_120006) do
     t.boolean "is_child", default: false, null: false
     t.boolean "is_primary", default: false, null: false
     t.string "last_name"
-    t.integer "meal_choice", default: 0
+    t.bigint "menu_option_id"
     t.boolean "needs_childcare", default: false, null: false
     t.boolean "needs_highchair", default: false, null: false
     t.integer "reception_seating", default: 0, null: false
     t.datetime "updated_at", null: false
     t.index ["invite_id"], name: "index_guests_on_invite_id"
+    t.index ["menu_option_id"], name: "index_guests_on_menu_option_id"
   end
 
   create_table "hotel_bookings", force: :cascade do |t|
@@ -94,9 +103,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_24_120006) do
     t.string "name", null: false
     t.text "notes"
     t.datetime "responded_at"
+    t.string "rsvp_token", null: false
     t.boolean "send_reminder", default: true, null: false
     t.datetime "updated_at", null: false
     t.index ["linked_invite_id"], name: "index_invites_on_linked_invite_id"
+    t.index ["rsvp_token"], name: "index_invites_on_rsvp_token", unique: true
+  end
+
+  create_table "menu_options", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.integer "sort_order", default: 0, null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "rsvps", force: :cascade do |t|
@@ -144,6 +164,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_24_120006) do
   add_foreign_key "event_invites", "events"
   add_foreign_key "event_invites", "invites"
   add_foreign_key "guests", "invites"
+  add_foreign_key "guests", "menu_options"
   add_foreign_key "hotel_bookings", "invites"
   add_foreign_key "invites", "invites", column: "linked_invite_id"
   add_foreign_key "rsvps", "events"

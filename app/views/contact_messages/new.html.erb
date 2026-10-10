@@ -1,0 +1,34 @@
+<div data-controller="appear">
+  <h1 class="type-serif-heading text-center animate-fade-in-up" style="font-size: var(--text-3xl); margin-bottom: var(--space-4);">Contact</h1>
+  <p class="text-center animate-fade-in-up delay-1" style="color: var(--color-text-secondary); margin-bottom: var(--space-12);">
+    Questions about the day, travel or your RSVP? Send us a note and we'll get back to you.
+  </p>
+
+  <div class="card appear">
+    <%= form_with model: @contact_message, url: contact_path, class: "space-y-4" do |f| %>
+      <% if @contact_message.errors.any? %>
+        <div class="notice-error">
+          <% @contact_message.errors.full_messages.each do |msg| %>
+            <p><%= msg %></p>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <%= f.label :name, "Your name", class: "form-label" %>
+          <%= f.text_field :name, class: "form-input", required: true, autocomplete: "name" %>
+        </div>
+        <div>
+          <%= f.label :email, "Your email", class: "form-label" %>
+          <%= f.email_field :email, class: "form-input", required: true, autocomplete: "email" %>
+        </div>
+      </div>
+      <div>
+        <%= f.label :body, "Message", class: "form-label" %>
+        <%= f.text_area :body, rows: 6, class: "form-input", required: true, maxlength: 5000 %>
+      </div>
+      <%= f.submit "Send Message", class: "btn btn-highlight w-full" %>
+    <% end %>
+  </div>
+</div>
