@@ -222,6 +222,7 @@ This is a template — fork it and make it yours:
 | `DATABASE_URL` | PostgreSQL connection | local socket |
 | `SECRET_KEY_BASE` | Rails session encryption | generated |
 | `SENDGRID_API_KEY` | Email delivery (production) | — |
+| `SMTP_ADDRESS`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_DOMAIN` | Use another SMTP provider instead of SendGrid | SendGrid settings |
 | `STRIPE_SECRET_KEY` | Stripe API key (hotel bookings) | — |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification | — |
 | `ADMIN_NOTIFICATION_EMAIL` | Admin notifications (RSVPs, contact messages, hotel bookings) | parsed from `WEDDING[:from_email]` |
@@ -240,6 +241,16 @@ Configured for container-based deployment (Dockerfile included). Also supports:
 
 - [Render](https://render.com) — `render.yaml` included
 - [Kamal](https://kamal-deploy.org) — deployment config included
+- Docker Compose — `compose.yaml` runs the app and PostgreSQL on your own server
+
+### Docker Compose
+
+```sh
+cp .env.example .env   # fill in APP_HOST, SECRET_KEY_BASE, POSTGRES_PASSWORD, ADMIN_PASSWORD, ...
+docker compose up -d --build
+```
+
+The app is published on `127.0.0.1:3000` (change with `APP_BIND` / `APP_PORT`) for a reverse proxy that terminates HTTPS. Migrations run on every start. The database lives in the `db-data` volume; back it up with `docker compose exec db pg_dump -U hitched hitched_production > backup.sql`. After pulling changes, run `docker compose up -d --build` again.
 
 ### CSV Import Format
 
