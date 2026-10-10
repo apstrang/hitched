@@ -4,7 +4,7 @@ welcome = Event.find_or_create_by!(name: "Welcome Dinner")
 welcome.update!(
   date: Date.new(2027, 7, 17),
   start_time: Time.zone.parse("16:00"),
-  location: "Shapleigh, Maine",
+  location: "Golden Heart Estate",
   location_url: "#",
   address: "123 Shapleigh Road, Shapleigh, Maine",
   maps_url: "#",
