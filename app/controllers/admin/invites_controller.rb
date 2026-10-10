@@ -1,6 +1,7 @@
 module Admin
   class InvitesController < BaseController
-    before_action :set_invite, only: [ :show, :edit, :update, :destroy, :link, :toggle_reminder ]
+    before_action :set_invite, only: [ :show, :edit, :update, :destroy, :link, :toggle_reminder,
+                                       :qr_code, :send_save_the_date, :send_invitation ]
 
     def index
       @invites = Invite.includes(:guests, :linked_invite).order(:name)
@@ -21,6 +22,34 @@ module Admin
     def show
       @guests = @invite.guests.order(:last_name, :first_name)
       @events = @invite.events.order(:date)
+    end
+
+    # Downloadable QR code for one household, for printed invitations.
+    def qr_code
+      qr = @invite.rsvp_qr_code
+      filename = "rsvp-qr-#{@invite.name.parameterize}"
+      respond_to do |format|
+        format.svg { send_data qr.svg, type: "image/svg+xml", filename: "#{filename}.svg" }
+        format.png { send_data qr.png(size: 1200), type: "image/png", filename: "#{filename}.png" }
+      end
+    end
+
+    # Printable sheet with every household's QR code and link.
+    def qr_codes
+      @invites = Invite.order(:name)
+      render layout: "print"
+    end
+
+    def send_save_the_date
+      RsvpMailer.save_the_date(@invite).deliver_later
+      @invite.update_column(:save_the_date_sent_at, Time.current)
+      redirect_to admin_invite_path(@invite), notice: "Save-the-date sent to #{@invite.email}."
+    end
+
+    def send_invitation
+      RsvpMailer.invitation(@invite).deliver_later
+      @invite.update_column(:invitation_sent_at, Time.current)
+      redirect_to admin_invite_path(@invite), notice: "Invitation sent to #{@invite.email}."
     end
 
     def notes

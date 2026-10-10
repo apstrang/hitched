@@ -1,6 +1,11 @@
 module Admin
   class EmailsController < BaseController
     def index
+      @save_the_date_targets = Invite.save_the_date_unsent.order(:name)
+      @save_the_dates_sent = Invite.where.not(save_the_date_sent_at: nil).count
+      @invitation_targets = Invite.invitation_unsent.order(:name)
+      @invitations_sent = Invite.where.not(invitation_sent_at: nil).count
+
       @reminder_targets = reminder_scope
         .includes(:guests, :events)
         .order(:name)
@@ -31,10 +36,17 @@ module Admin
       redirect_to admin_emails_path, notice: "Google Sheets export is not yet configured. Set up credentials in config/google_sheets.yml."
     end
 
+    # Bulk sends only go to households that haven't had one yet, so the
+    # button can be pressed again after adding late guests. Resend to a
+    # single household from its invite page.
+    def send_save_the_dates
+      count = deliver_once(Invite.save_the_date_unsent, :save_the_date_sent_at) { |i| RsvpMailer.save_the_date(i) }
+      redirect_to admin_emails_path, notice: "Save-the-dates sent to #{count} invite#{'s' unless count == 1}."
+    end
+
     def send_invitations
-      invites = Invite.where.not(email: nil)
-      invites.each { |i| RsvpMailer.invitation(i).deliver_later }
-      redirect_to admin_emails_path, notice: "Invitations sent to #{invites.count} invites."
+      count = deliver_once(Invite.invitation_unsent, :invitation_sent_at) { |i| RsvpMailer.invitation(i) }
+      redirect_to admin_emails_path, notice: "Invitations sent to #{count} invite#{'s' unless count == 1}."
     end
 
     def send_reminders
@@ -60,6 +72,7 @@ module Admin
 
       email_type = params[:email_type]
       mail = case email_type
+      when "save_the_date"        then RsvpMailer.save_the_date(invite)
       when "invitation"           then RsvpMailer.invitation(invite)
       when "confirmation"         then RsvpMailer.confirmation(invite)
       when "update_notification"  then RsvpMailer.update_notification(invite)
@@ -79,6 +92,15 @@ module Admin
     end
 
     private
+
+    def deliver_once(scope, sent_column)
+      invites = scope.to_a
+      invites.each do |invite|
+        yield(invite).deliver_later
+        invite.update_column(sent_column, Time.current)
+      end
+      invites.size
+    end
 
     def reminder_scope
       Invite.where(responded_at: nil)

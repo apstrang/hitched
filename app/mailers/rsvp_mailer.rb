@@ -1,8 +1,19 @@
 class RsvpMailer < ApplicationMailer
+  helper :wedding_dates
+
+  def save_the_date(invite)
+    @invite = invite
+    @events = invite.events.order(:date, :start_time)
+    @site_url = rsvp_invite_url(token: invite.rsvp_token)
+    attach_qr_code(invite)
+    mail(to: invite.email, subject: "Save the Date — #{WEDDING[:couple_names_possessive]} Wedding")
+  end
+
   def invitation(invite)
     @invite = invite
     @events = invite.events.order(:date, :start_time)
     @manage_url = rsvp_invite_url(token: invite.rsvp_token)
+    attach_qr_code(invite)
     mail(to: invite.email, subject: "You're Invited — #{WEDDING[:couple_names_possessive]} Wedding")
   end
 
@@ -53,6 +64,12 @@ class RsvpMailer < ApplicationMailer
   end
 
   private
+
+  # The same QR code as the admin and print sheet, for guests reading on a
+  # computer who want to open their link on their phone.
+  def attach_qr_code(invite)
+    attachments.inline["rsvp-qr-code.png"] = { mime_type: "image/png", content: invite.rsvp_qr_code.png(size: 300) }
+  end
 
   def admin_notification_email
     ENV.fetch("ADMIN_NOTIFICATION_EMAIL", WEDDING[:from_email].match(/<(.+)>/)[1])

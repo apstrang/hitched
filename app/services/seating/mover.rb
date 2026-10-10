@@ -34,11 +34,11 @@ module Seating
       result = nil
       ApplicationRecord.transaction do
         result = case @destination[:type].to_s
-                 when "seat"     then move_to_seat
-                 when "table"    then move_to_table
-                 when "unseated" then move_to_unseated
-                 else                 fail_with(:invalid_input)
-                 end
+        when "seat"     then move_to_seat
+        when "table"    then move_to_table
+        when "unseated" then move_to_unseated
+        else                 fail_with(:invalid_input)
+        end
         raise ActiveRecord::Rollback unless result.ok?
       end
       result

@@ -1,0 +1,12 @@
+Dear <%= @invite.name %>,
+
+SAVE THE DATE
+
+We're getting married, and we'd love for you to be there.
+
+<%= [ wedding_dates(@events), WEDDING[:location].presence ].compact.join("\n") %>
+
+A formal invitation will follow. In the meantime, our website has travel details and more, and it's where you'll RSVP once invitations go out:
+<%= @site_url %>
+
+<%= WEDDING[:couple_names] %>

@@ -57,10 +57,16 @@ Rails.application.routes.draw do
     root to: "dashboard#index"
     get "dashboard", to: "dashboard#index"
     resources :invites do
-      collection { get :search }
+      collection do
+        get :search
+        get :qr_codes
+      end
       member do
         patch :link
         patch :toggle_reminder
+        get :qr_code
+        post :send_save_the_date
+        post :send_invitation
       end
       resource :rsvp, only: [ :edit, :update ], controller: "rsvps"
     end
@@ -91,6 +97,7 @@ Rails.application.routes.draw do
     get  "notes",             to: "invites#notes",            as: :notes
     get  "emails",            to: "emails#index",             as: :emails
     post "export",            to: "emails#export",            as: :export
+    post "send_save_the_dates", to: "emails#send_save_the_dates", as: :send_save_the_dates
     post "send_invitations",  to: "emails#send_invitations",  as: :send_invitations
     post "send_reminders",    to: "emails#send_reminders",    as: :send_reminders
     post "send_children_preferences", to: "emails#send_children_preferences", as: :send_children_preferences

@@ -14,7 +14,27 @@
   <div><span class="text-muted">Responded:</span> <%= @invite.responded? ? @invite.responded_at.strftime("%b %d, %Y %l:%M %p") : "Not yet" %></div>
   <div><span class="text-muted">Attending:</span> <%= @invite.attending.nil? ? "Pending" : @invite.attending? ? "Yes" : "No" %></div>
   <div><span class="text-muted">Children Attending:</span> <%= @invite.children_attending? ? "Yes" : "No" %></div>
-  <div class="col-span-2"><span class="text-muted">RSVP link:</span> <%= link_to rsvp_invite_url(token: @invite.rsvp_token), rsvp_invite_url(token: @invite.rsvp_token), target: "_blank", rel: "noopener" %></div>
+  <div><span class="text-muted">Save-the-date:</span> <%= @invite.save_the_date_sent_at ? "Sent #{@invite.save_the_date_sent_at.strftime("%b %d, %Y")}" : "Not sent" %></div>
+  <div><span class="text-muted">Invitation:</span> <%= @invite.invitation_sent_at ? "Sent #{@invite.invitation_sent_at.strftime("%b %d, %Y")}" : "Not sent" %></div>
+</div>
+
+<% qr = @invite.rsvp_qr_code %>
+<div class="card mb-6" style="display: flex; gap: var(--space-6); align-items: center; flex-wrap: wrap;">
+  <div style="width: 160px; flex-shrink: 0;"><%= qr.inline_svg %></div>
+  <div style="flex: 1; min-width: 240px; font-size: var(--text-sm);">
+    <p style="margin-bottom: var(--space-2);"><span class="text-muted">Permanent link:</span> <%= link_to qr.url, qr.url, target: "_blank", rel: "noopener" %></p>
+    <p class="text-muted" style="margin-bottom: var(--space-3);">Opens the home page before RSVPs open and this household's RSVP after. The QR code is the same link, also included in their emails.</p>
+    <div class="flex gap-2 flex-wrap">
+      <%= link_to "Download PNG", qr_code_admin_invite_path(@invite, format: :png), class: "btn btn-outline btn-sm" %>
+      <%= link_to "Download SVG", qr_code_admin_invite_path(@invite, format: :svg), class: "btn btn-outline btn-sm" %>
+      <% if @invite.email.present? %>
+        <%= button_to (@invite.save_the_date_sent_at ? "Resend Save-the-Date" : "Send Save-the-Date"), send_save_the_date_admin_invite_path(@invite),
+          class: "btn btn-outline btn-sm", data: { turbo_confirm: "Email a save-the-date to #{@invite.email}?" } %>
+        <%= button_to (@invite.invitation_sent_at ? "Resend Invitation" : "Send Invitation"), send_invitation_admin_invite_path(@invite),
+          class: "btn btn-outline btn-sm", data: { turbo_confirm: "Email an invitation to #{@invite.email}?" } %>
+      <% end %>
+    </div>
+  </div>
 </div>
 
 <% if @invite.notes.present? %>

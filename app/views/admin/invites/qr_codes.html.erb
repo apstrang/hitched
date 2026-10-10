@@ -1,0 +1,32 @@
+<% content_for :title, "RSVP QR codes" %>
+<% content_for :head do %>
+  <style>
+    .qr-sheet { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .qr-card { border: 1px dashed #bbb; border-radius: 6px; padding: 12px; text-align: center; break-inside: avoid; page-break-inside: avoid; }
+    .qr-card svg { width: 100%; max-width: 160px; height: auto; display: block; margin: 0 auto 8px; }
+    .qr-name { font-size: 15px; margin: 0 0 4px; }
+    .qr-url { font-family: ui-monospace, Menlo, monospace; font-size: 9px; color: #666; word-break: break-all; margin: 0; }
+    @media print { .qr-sheet { grid-template-columns: repeat(3, 1fr); } }
+  </style>
+<% end %>
+
+<div class="no-print">
+  <%= link_to "← Back to invites", admin_invites_path %>
+  <button type="button" onclick="window.print()">Print</button>
+  <span>Each code opens that household's permanent link: the home page before RSVPs open, their RSVP after.</span>
+</div>
+
+<% if @invites.empty? %>
+  <p>No invites yet.</p>
+<% else %>
+  <div class="qr-sheet">
+    <% @invites.each do |invite| %>
+      <% qr = invite.rsvp_qr_code %>
+      <div class="qr-card">
+        <%= qr.inline_svg %>
+        <p class="qr-name"><%= invite.name %></p>
+        <p class="qr-url"><%= qr.url %></p>
+      </div>
+    <% end %>
+  </div>
+<% end %>
