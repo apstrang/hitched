@@ -15,6 +15,16 @@ class RsvpInviteLinkTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "before RSVPs open, the link lets the guest onto the site home page" do
+    with_pages_disabled(:rsvp) do
+      get rsvp_invite_path(token: invites(:smiths).rsvp_token)
+      assert_redirected_to root_path
+
+      follow_redirect!
+      assert_response :success
+    end
+  end
+
   test "permanent link still works long after it was issued" do
     invite = invites(:smiths)
 

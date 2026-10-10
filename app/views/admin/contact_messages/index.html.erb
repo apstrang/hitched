@@ -1,0 +1,22 @@
+<h1 class="type-serif-heading mb-6" style="font-size: var(--text-3xl);">Messages</h1>
+
+<% if @contact_messages.empty? %>
+  <p class="text-muted">No messages from the contact page yet.</p>
+<% end %>
+
+<div class="space-y-4">
+  <% @contact_messages.each do |message| %>
+    <div class="card">
+      <div class="flex items-center justify-between mb-2">
+        <div>
+          <strong><%= message.name %></strong>
+          <span class="text-muted">&middot; <%= mail_to message.email %> &middot; <%= message.created_at.strftime("%b %d, %Y %l:%M %p") %></span>
+        </div>
+        <%= button_to "Delete", admin_contact_message_path(message), method: :delete,
+          data: { turbo_confirm: "Delete this message?" },
+          class: "btn btn-danger btn-sm" %>
+      </div>
+      <div class="card-body"><%= simple_format(message.body) %></div>
+    </div>
+  <% end %>
+</div>

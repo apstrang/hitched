@@ -32,6 +32,8 @@ Rails.application.routes.draw do
   get "faq",         to: "pages#faq"
   get "our-story",   to: "pages#our_story"
   get "gallery",     to: "pages#gallery"
+  get  "contact",    to: "contact_messages#new",    as: :contact
+  post "contact",    to: "contact_messages#create"
 
   # Hotel bookings
   resources :hotel_bookings, only: [ :new, :create ] do
@@ -64,6 +66,7 @@ Rails.application.routes.draw do
     end
     resources :guests
     resources :menu_options, except: [ :show ]
+    resources :contact_messages, only: [ :index, :destroy ], path: "messages"
     resources :events do
       resource :seating, only: [ :show ], controller: "seating" do
         post :randomize

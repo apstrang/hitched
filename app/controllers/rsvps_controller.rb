@@ -1,6 +1,6 @@
 class RsvpsController < ApplicationController
   skip_before_action :require_invite_code, only: :entry
-  before_action -> { require_page_enabled!(:rsvp) }
+  before_action -> { require_page_enabled!(:rsvp) }, except: :entry
 
   def new
   end
@@ -25,7 +25,8 @@ class RsvpsController < ApplicationController
     invite = Invite.find_by(rsvp_token: params[:token])
     if invite
       session[:site_authenticated] = true
-      redirect_to rsvp_show_path(token: invite.rsvp_token)
+      # Before RSVPs open (e.g. a save-the-date QR code), land on the home page.
+      redirect_to page_enabled?(:rsvp) ? rsvp_show_path(token: invite.rsvp_token) : root_path
     else
       redirect_to(session[:site_authenticated] ? rsvp_path : gate_path,
         alert: "We couldn't find that invitation link. Please enter your email instead.")
