@@ -2,16 +2,16 @@ puts "Seeding events..."
 
 welcome = Event.find_or_create_by!(name: "Welcome Dinner")
 welcome.update!(
-  date: Date.new(2025, 9, 19),
-  start_time: Time.zone.parse("17:00"),
-  location: "Château de Flapjack",
+  date: Date.new(2027, 7, 17),
+  start_time: Time.zone.parse("16:00"),
+  location: "Shapleigh, Maine",
   location_url: "#",
-  address: "Route de Croissant, 13990 Buttersville, France",
+  address: "123 Shapleigh Road, Shapleigh, Maine",
   maps_url: "#",
-  time_description: "5:00pm",
-  attire: "Garden Elegance",
+  time_description: "4:00pm",
+  attire: "Not a Wifebeater, pls",
   attire_description: "Elegant, effortless summer attire in soft, warm-weather fabrics.",
-  subtitle: "Friday, September 19",
+  subtitle: "Saturday, July 17",
   description: "Join us as we gather at the Château for a relaxed welcome — golden light across the vineyards, an aperitif in the gardens and a warm start to the celebrations.",
   sort_order: 1,
   image: "venue4.jpg"
